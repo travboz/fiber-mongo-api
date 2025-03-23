@@ -10,39 +10,35 @@ import (
 )
 
 type MongoDBInstance struct {
-	dbName string
-	uri    string
-	client *mongo.Client
+	DbName string
+	URI    string
+	Client *mongo.Client
 }
 
 func NewMongoDBInstance(dbname, uri string) *MongoDBInstance {
-	return &MongoDBInstance{uri: uri, dbName: dbname}
+	return &MongoDBInstance{URI: uri, DbName: dbname}
 }
 
 func (mi *MongoDBInstance) ConnectToInstance() error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	clientOptions := options.Client().ApplyURI(mi.uri)
+	clientOptions := options.Client().ApplyURI(mi.URI)
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to connect to MongoDB: %w", err)
 	}
 
-	// Verify connection
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		return err
+	if err = client.Ping(ctx, nil); err != nil {
+		return fmt.Errorf("failed to ping MongoDB: %w", err)
 	}
 
 	fmt.Println("Connected to MongoDB")
-
-	mi.client = client
-
+	mi.Client = client
 	return nil
 }
 
 // getting database collections
 func (mi *MongoDBInstance) GetCollection(collectionName string) *mongo.Collection {
-	return mi.client.Database(mi.dbName).Collection(collectionName)
+	return mi.Client.Database(mi.DbName).Collection(collectionName)
 }
