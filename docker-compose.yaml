@@ -1,0 +1,13 @@
+services:
+  db:
+    image: mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=golang-api
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-fiber:/data/db
+volumes:
+  mongo-fiber:
+    driver: local
