@@ -38,6 +38,7 @@ func (app *application) HandlerCreateUser(c *fiber.Ctx) error {
 		Title:    user.Title,
 	}
 
+	// TODO: replace with CreateUser
 	result, err := usersCollection.InsertOne(ctx, newUser)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(models.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
@@ -58,6 +59,7 @@ func (app *application) HandlerGetAUser(c *fiber.Ctx) error {
 
 	objID, _ := primitive.ObjectIDFromHex(userID)
 
+	// TODO: replace with GetUserByID
 	err := usersCollection.FindOne(ctx, bson.M{"id": objID}).Decode(&user)
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(models.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
@@ -86,6 +88,7 @@ func (app *application) HandlerEditAUser(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(models.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
 	}
 
+	// TODO: Change to user UpdateUser
 	update := bson.M{"name": user.Name, "location": user.Location, "title": user.Title}
 
 	result, err := usersCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
@@ -116,6 +119,7 @@ func (app *application) HandlerDeleteAUser(c *fiber.Ctx) error {
 
 	objId, _ := primitive.ObjectIDFromHex(userId)
 
+	// TODO: Update to use DeleteUser
 	result, err := usersCollection.DeleteOne(ctx, bson.M{"id": objId})
 	if err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(models.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
@@ -140,6 +144,7 @@ func (app *application) HandlerGetAllUsers(c *fiber.Ctx) error {
 	var users []models.User
 	defer cancel()
 
+	// TODO: Update to user FetchAllUsers
 	results, err := usersCollection.Find(ctx, bson.M{})
 
 	if err != nil {
