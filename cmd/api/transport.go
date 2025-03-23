@@ -1,44 +1,18 @@
-package handlers
+package main
 
 import (
 	"context"
 	"net/http"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/travboz/fiber-mongo-api/internal/db"
 	"github.com/travboz/fiber-mongo-api/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Controller struct {
-	client    *mongo.Client
-	validator *validator.Validate
-}
-
-func NewMongoController(uri string) (*Controller, error) {
-	// c, err := db.ConnectMongoDB("mongodb://localhost:27017")
-	c, err := db.ConnectMongoDB(uri)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return &Controller{
-		c,
-		validator.New(),
-	}, nil
-}
-
-var MongoController, _ = NewMongoController("mongodb://localhost:27017")
-var validate = validator.New()
-var usersCollection = db.GetCollection(MongoController.client, "users")
-
-func CreateUser(c *fiber.Ctx) error {
-
+func (app *application) HandlerCreateUser(c *fiber.Ctx) error {
+	usersCollection := app.dbInstance.GetCollection("users")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -53,7 +27,7 @@ func CreateUser(c *fiber.Ctx) error {
 	}
 
 	//use the validator library to validate required fields
-	if validationErr := validate.Struct(&user); validationErr != nil {
+	if validationErr := app.validator.Struct(&user); validationErr != nil {
 		return c.Status(http.StatusBadRequest).JSON(models.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
 	}
 
@@ -73,10 +47,11 @@ func CreateUser(c *fiber.Ctx) error {
 
 }
 
-func GetAUser(c *fiber.Ctx) error {
+func (app *application) HandlerGetAUser(c *fiber.Ctx) error {
+	usersCollection := app.dbInstance.GetCollection("users")
+
 	userID := c.Params("userId")
 	var user models.User
-	usersCollection := db.GetCollection(MongoController.client, "users")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -91,7 +66,9 @@ func GetAUser(c *fiber.Ctx) error {
 	return c.Status(http.StatusOK).JSON(models.UserResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": user}})
 }
 
-func EditAUser(c *fiber.Ctx) error {
+func (app *application) HandlerEditAUser(c *fiber.Ctx) error {
+	usersCollection := app.dbInstance.GetCollection("users")
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	userId := c.Params("userId")
 	var user models.User
@@ -105,7 +82,7 @@ func EditAUser(c *fiber.Ctx) error {
 	}
 
 	//use the validator library to validate required fields
-	if validationErr := validate.Struct(&user); validationErr != nil {
+	if validationErr := app.validator.Struct(&user); validationErr != nil {
 		return c.Status(http.StatusBadRequest).JSON(models.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
 	}
 
@@ -130,7 +107,9 @@ func EditAUser(c *fiber.Ctx) error {
 
 }
 
-func DeleteAUser(c *fiber.Ctx) error {
+func (app *application) HandlerDeleteAUser(c *fiber.Ctx) error {
+	usersCollection := app.dbInstance.GetCollection("users")
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	userId := c.Params("userId")
 	defer cancel()
@@ -154,7 +133,9 @@ func DeleteAUser(c *fiber.Ctx) error {
 
 }
 
-func GetAllUsers(c *fiber.Ctx) error {
+func (app *application) HandlerGetAllUsers(c *fiber.Ctx) error {
+	usersCollection := app.dbInstance.GetCollection("users")
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var users []models.User
 	defer cancel()
@@ -181,6 +162,6 @@ func GetAllUsers(c *fiber.Ctx) error {
 	)
 }
 
-func HelloHealthCheck(c *fiber.Ctx) error {
+func (app *application) HandlerHelloHealthCheck(c *fiber.Ctx) error {
 	return c.JSON(&fiber.Map{"data": "Hello from Fiber & MongoDB"})
 }

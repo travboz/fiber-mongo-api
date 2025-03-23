@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/travboz/fiber-mongo-api/internal/db"
-	"github.com/travboz/fiber-mongo-api/internal/routes"
 	"github.com/travboz/fiber-mongo-api/pkg/configs"
 )
 
@@ -19,9 +19,12 @@ func main() {
 	app := &application{
 		dbInstance: db,
 		fiber:      fiber.New(),
+		validator:  validator.New(),
 	}
 
-	routes.UserRoute(app.fiber)
+	app.UserRoutes()
 
-	app.fiber.Listen(":6000")
+	if err := app.fiber.Listen(":6000"); err != nil {
+		log.Fatal(err)
+	}
 }
