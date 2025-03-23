@@ -15,8 +15,16 @@ type MongoDBInstance struct {
 	Client *mongo.Client
 }
 
-func NewMongoDBInstance(dbname, uri string) *MongoDBInstance {
-	return &MongoDBInstance{URI: uri, DbName: dbname}
+func NewMongoDBInstance(dbname, uri string) (*MongoDBInstance, error) {
+	nm := MongoDBInstance{URI: uri, DbName: dbname}
+	err := nm.ConnectToInstance()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &nm, nil
+
 }
 
 func (mi *MongoDBInstance) ConnectToInstance() error {
@@ -38,7 +46,6 @@ func (mi *MongoDBInstance) ConnectToInstance() error {
 	return nil
 }
 
-// getting database collections
 func (mi *MongoDBInstance) GetCollection(collectionName string) *mongo.Collection {
 	return mi.Client.Database(mi.DbName).Collection(collectionName)
 }

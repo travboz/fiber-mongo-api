@@ -3,11 +3,11 @@ package main
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
-	"github.com/travboz/fiber-mongo-api/internal/db"
+	"github.com/travboz/fiber-mongo-api/internal/store"
 )
 
 type application struct {
-	dbInstance *db.MongoDBInstance
-	fiber      *fiber.App
-	validator  *validator.Validate
+	store     store.Storage
+	fiber     *fiber.App
+	validator *validator.Validate
 }

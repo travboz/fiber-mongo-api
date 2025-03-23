@@ -6,6 +6,9 @@ OUTPUT_BINARY=fiber-mongo
 OUTPUT_DIR=./bin
 ENTRY_DIR = ./cmd/api
 
+run-files:
+	@go run $(ENTRY_DIR)/*.go
+
 build:
 	@echo "Building..."
 	@mkdir -p $(OUTPUT_DIR)
