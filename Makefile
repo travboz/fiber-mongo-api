@@ -22,11 +22,11 @@ clean:
 
 
 # docker commands
-up:	
+compose-up:	
 	@echo "Starting containers..."
 	@docker compose up -d
 
-down:
+compose-down:
 	@echo "Stopping containers and deleting volumes..."
 	@docker compose down -v
 
@@ -38,5 +38,5 @@ seed-db:
 	@bash $(SCRIPTS_DIR)/seed.sh
 
 
-restart: down up run
+restart: compose-down compose-up run
 	@echo "Restarting..."
