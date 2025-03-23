@@ -1,28 +1,27 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
+	"github.com/travboz/fiber-mongo-api/internal/db"
 	"github.com/travboz/fiber-mongo-api/internal/routes"
+	"github.com/travboz/fiber-mongo-api/pkg/configs"
 )
 
 func main() {
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
+	if err := configs.LoadEnv(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-	app := fiber.New()
+	db := db.NewMongoDBInstance("golang-api", "mongodb://localhost:27017")
 
-	// app.Get("/", hello)
+	app := &application{
+		dbInstance: db,
+		fiber:      fiber.New(),
+	}
 
-	// client, err := db.ConnectMongoDB(env.GetString("MONGO_URI", "mongodb://localhost:27017"))
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
+	routes.UserRoute(app.fiber)
 
-	// db := client.Database(env.GetString("DBNAME", "golang-api"))
-
-	routes.UserRoute(app)
-
-	app.Listen(":6000")
+	app.fiber.Listen(":6000")
 }
