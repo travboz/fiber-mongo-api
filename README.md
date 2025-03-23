@@ -1,5 +1,7 @@
 # Go Fiber and MongoDB API
+<p align="center">
 <img src="https://raw.githubusercontent.com/egonelbre/gophers/63b1f5a9f334f9e23735c6e09ac003479ffe5df5/vector/friends/stovepipe-hat-front.svg" alt="Stove-Pipe-Hat-Wearing Gopher" width="300">
+</p>
 
 
 A user management API built with Go, Fiber, and MongoDB. This project was primarily a refactor effort to improve the codebase by decoupling components, leveraging dependency injection, and implementing the repository pattern for better maintainability and scalability. It enables basic CRUD operations for handling user data through an HTTP server and utilizes Docker Compose for service orchestration.
