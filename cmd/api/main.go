@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/travboz/fiber-mongo-api/routes"
+	"github.com/travboz/fiber-mongo-api/internal/routes"
 )
 
 func main() {
